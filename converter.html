@@ -5,27 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL 변환기 (GitHub+Netlify)</title>
     <style>
-        body { font-family: sans-serif; padding: 15px; font-size: 14px; }
-        label, input, button, textarea { display: block; margin-bottom: 10px; width: 95%; max-width: 600px; box-sizing: border-box; }
-        input, textarea { padding: 8px; border: 1px solid #ccc; font-size: 14px; }
-        button { padding: 10px 15px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; font-size: 14px;}
-        button:hover { background-color: #0056b3; }
-        textarea { height: 80px; font-family: monospace; } /* Use monospace for URLs */
-        #result { font-weight: bold; color: blue; margin-top: 5px;}
-        .error { color: red; font-size: small;}
+        /* 기본적인 스타일링 */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; 
+            padding: 20px; 
+            font-size: 14px; 
+            line-height: 1.6;
+            background-color: #f8f9fa; /* Light background */
+            color: #333; /* Darker text */
+        }
+        .container {
+            background-color: #ffffff; /* White container */
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 700px;
+            margin: 20px auto;
+        }
+        h2 {
+            margin-top: 0;
+            color: #0056b3; /* Title color */
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: bold; 
+            color: #555;
+        }
+        input[type="url"], 
+        textarea { 
+            display: block; 
+            width: 100%; 
+            padding: 10px; 
+            margin-bottom: 15px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            box-sizing: border-box; /* Prevents padding from expanding width */
+            font-size: 14px; 
+        }
+        textarea { 
+            height: 80px; 
+            font-family: 'Courier New', Courier, monospace; /* Monospace for URL */
+            background-color: #e9ecef; /* Light grey background for output */
+            resize: vertical; /* Allow vertical resizing */
+        }
+        button { 
+            padding: 12px 20px; 
+            cursor: pointer; 
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            font-size: 15px;
+            transition: background-color 0.2s ease;
+        }
+        button:hover { 
+            background-color: #0056b3; 
+        }
+        .message { 
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .error { 
+            color: #D8000C; /* Red error text */
+            background-color: #FFD2D2; /* Light red background */
+            border: 1px solid #D8000C;
+        }
+        .success {
+             color: #4F8A10; /* Green success text */
+             background-color: #DFF2BF; /* Light green background */
+             border: 1px solid #4F8A10;
+        }
     </style>
 </head>
 <body>
-    <h2>쿠팡 URL 변환기 (Netlify 리디렉션)</h2>
+    <div class="container">
+        <h2>쿠팡 URL 변환기 (Netlify 리디렉션)</h2>
+        
+        <label for="coupangUrl">원본 쿠팡 URL:</label>
+        <input type="url" id="coupangUrl" placeholder="https://link.coupang.com/a/..." required>
 
-    <label for="coupangUrl">원본 쿠팡 URL:</label>
-    <input type="url" id="coupangUrl" placeholder="https://link.coupang.com/a/..." required>
+        <button onclick="generateUrl()">변환 URL 생성</button>
 
-    <button onclick="generateUrl()">변환 URL 생성</button>
-
-    <label for="transformedUrl">변환된 Netlify URL (복사해서 사용):</label>
-    <textarea id="transformedUrl" readonly></textarea>
-    <div id="message" class="error"></div>
+        <label for="transformedUrl">변환된 Netlify URL (복사해서 사용):</label>
+        <textarea id="transformedUrl" readonly placeholder="여기에 변환된 Netlify URL이 표시됩니다..."></textarea>
+        
+        <div id="message" class="message" style="display: none;"></div> 
+        </div>
 
     <script>
         function generateUrl() {
@@ -34,23 +104,56 @@
             const messageDiv = document.getElementById('message');
             const coupangUrl = coupangUrlInput.value.trim();
 
-            // ★★★ 본인의 Netlify 사이트 주소로 변경하세요! (반드시 '/'로 끝나도록) ★★★
+            // ==================================================================
+            // ★★★ 중요: 아래 변수 값을 본인의 Netlify 사이트 이름으로 변경하세요! ★★★
+            // 예시: 'https://my-cool-redirector.netlify.app/'
+            // 반드시 'https://'로 시작하고 '/'로 끝나야 합니다.
+            // ==================================================================
             const netlifyRedirectorBaseUrl = 'https://your777-redirect.netlify.app/'; 
+            // ==================================================================
 
-            messageDiv.textContent = ''; // Clear previous messages
-            transformedUrlOutput.value = ''; // Clear previous output
+            // 이전 메시지 및 결과 초기화
+            messageDiv.textContent = '';
+            messageDiv.style.display = 'none';
+            messageDiv.className = 'message'; // Reset class
+            transformedUrlOutput.value = ''; 
 
+            // Netlify 주소가 placeholder 상태인지 확인 (실제 사용 시 이 부분 제거 가능)
+            if (netlifyRedirectorBaseUrl === 'https://your777-redirect.netlify.app/') {
+                 messageDiv.textContent = '오류: 코드의 netlifyRedirectorBaseUrl 변수를 실제 Netlify 주소로 변경해주세요!';
+                 messageDiv.className = 'message error'; // Add error class
+                 messageDiv.style.display = 'block';
+                 return; // 중단
+            }
+
+
+            // 입력된 URL 유효성 검사 (http:// 또는 https:// 시작)
             if (coupangUrl && (coupangUrl.startsWith('http://') || coupangUrl.startsWith('https://'))) {
                 try {
+                    // 쿠팡 URL을 안전하게 인코딩
                     const encodedCoupangUrl = encodeURIComponent(coupangUrl);
-                    const finalTransformedUrl = `<span class="math-inline">\{netlifyRedirectorBaseUrl\}?target\=</span>{encodedCoupangUrl}`;
+                    
+                    // 최종 변환된 URL 생성 (템플릿 리터럴 사용)
+                    const finalTransformedUrl = `${netlifyRedirectorBaseUrl}?target=${encodedCoupangUrl}`;
+                    
+                    // 결과 출력
                     transformedUrlOutput.value = finalTransformedUrl;
+                    messageDiv.textContent = 'URL이 성공적으로 변환되었습니다. 위 텍스트 상자의 내용을 복사하세요.';
+                    messageDiv.className = 'message success'; // Add success class
+                    messageDiv.style.display = 'block';
+
                 } catch (e) {
-                    messageDiv.textContent = '오류: URL 인코딩 중 문제가 발생했습니다.';
+                    // 인코딩 중 오류 발생 시
+                    messageDiv.textContent = '오류: URL 인코딩 중 문제가 발생했습니다. 입력값을 확인해주세요.';
+                    messageDiv.className = 'message error'; // Add error class
+                    messageDiv.style.display = 'block';
                     console.error("Encoding error:", e);
                 }
             } else {
+                 // 유효하지 않은 URL 입력 시
                  messageDiv.textContent = '오류: 유효한 URL(http:// 또는 https:// 시작)을 입력하세요.';
+                 messageDiv.className = 'message error'; // Add error class
+                 messageDiv.style.display = 'block';
             }
         }
     </script>
