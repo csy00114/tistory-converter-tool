@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"> 
+    <title>Redirecting...</title>
+    <meta name="robots" content="noindex, nofollow"> 
+    <script>
+        /**
+         * URL의 쿼리 파라미터 값을 가져오는 함수
+         * @param {string} param 가져올 파라미터 이름 (예: 'target')
+         * @returns {string|null} 파라미터 값 또는 null
+         */
+        function getQueryParam(param) {
+            // 현재 페이지의 URL에서 쿼리 문자열을 가져옵니다 (예: '?target=...')
+            const urlParams = new URLSearchParams(window.location.search);
+            // 지정된 이름의 파라미터 값을 반환합니다. 없으면 null 반환.
+            return urlParams.get(param);
+        }
+
+        /**
+         * Tistory 중간 페이지로 리디렉션하는 메인 함수
+         */
+        function redirectToTistoryIntermediate() {
+            // URL에서 'target' 파라미터 값을 가져옵니다.
+            const encodedTarget = getQueryParam('target'); 
+            
+            // ==================================================================
+            // ★★★ 중요: 아래 변수 값을 본인의 Tistory 중간 페이지 주소로 변경! ★★★
+            // 예시: 'https://myblog.tistory.com/1'
+            // ==================================================================
+            const tistoryIntermediateUrlBase = 'https://hotissues.lightbartizan.com/2025/04/target-link.html'; 
+            // ==================================================================
+            
+            // 'target' 파라미터 값이 존재하는지 확인
+            if (encodedTarget) {
+                // Tistory 중간 페이지 주소에 ?target=... 파라미터를 붙여서 최종 URL 생성
+                const finalRedirectUrl = `${tistoryIntermediateUrlBase}?target=${encodedTarget}`;
+                
+                // 생성된 최종 URL로 즉시 리디렉션 실행
+                // window.location.replace는 현재 페이지를 히스토리에 남기지 않고 이동합니다.
+                window.location.replace(finalRedirectUrl);
+            } else {
+                // 'target' 파라미터가 URL에 없을 경우의 예외 처리
+                console.error("Target parameter missing on Netlify redirector page.");
+                
+                // 오류 메시지를 보여주거나 기본 페이지(예: 블로그 홈)로 보낼 수 있습니다.
+                // 아래는 오류 메시지를 보여주는 예시입니다.
+                document.body.innerHTML = '<p style="font-family: sans-serif; text-align: center; padding-top: 50px; color: red;">오류: 리디렉션할 대상 정보가 없습니다.</p>';
+                
+                // 또는 그냥 블로그 홈으로 보내려면 아래 주석 해제
+                // window.location.replace('https://your777.tistory.com/'); 
+            }
+        }
+
+        // 페이지가 로드되면 즉시 리디렉션 함수를 실행합니다.
+        // window.onload 와 같은 이벤트 핸들러 없이 바로 실행하여 최대한 빠르게 리디렉션합니다.
+        redirectToTistoryIntermediate(); 
+    </script>
+</head>
+<body>
+    </body>
+</html>
