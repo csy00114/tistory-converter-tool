@@ -119,12 +119,12 @@
             transformedUrlOutput.value = ''; 
 
             // Netlify 주소가 placeholder 상태인지 확인 (실제 사용 시 이 부분 제거 가능)
-            if (netlifyRedirectorBaseUrl === 'https://your777-redirect.netlify.app/') {
-                 messageDiv.textContent = '오류: 코드의 netlifyRedirectorBaseUrl 변수를 실제 Netlify 주소로 변경해주세요!';
-                 messageDiv.className = 'message error'; // Add error class
-                 messageDiv.style.display = 'block';
-                 return; // 중단
-            }
+          //  if (netlifyRedirectorBaseUrl === 'https://your777-redirect.netlify.app/') {
+          //       messageDiv.textContent = '오류: 코드의 netlifyRedirectorBaseUrl 변수를 실제 Netlify 주소로 변경해주세요!';
+          //       messageDiv.className = 'message error'; // Add error class
+          ///       messageDiv.style.display = 'block';
+          //       return; // 중단
+          //  }
 
 
             // 입력된 URL 유효성 검사 (http:// 또는 https:// 시작)
